@@ -26,3 +26,35 @@ function loadUser(userId, callback) {
 loadUser(42, (user) => {
     console.log("User loaded:", user);
 });
+
+async function getDataWithAsync() {
+    try {
+        const user = await getUserData(1);
+        const posts = await getUserPosts(user.id);
+        const comments = await getPostComments(posts[0].id);
+        return comments;
+    } catch (error) {
+        console.error("Failed:", error);
+        throw error;
+    }
+}
+
+// Parallel version — MUCH faster
+async function getAllUsersFast() {
+    const [u1, u2, u3] = await Promise.all([
+        getUserData(1),
+        getUserData(2),
+        getUserData(3)
+    ]);
+    return [u1, u2, u3];
+}
+
+async function fetchEverything(userId) {
+    const user = await getUserData(userId);
+    console.log("User:", user);
+    const posts = await getUserPosts(user.id);
+    console.log("Posts:", posts);
+    const comments = await getPostComments(posts[0].id);
+    console.log("Comments:", comments);
+}
+fetchEverything(1);
